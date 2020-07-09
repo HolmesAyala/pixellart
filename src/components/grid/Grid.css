@@ -1,7 +1,7 @@
 .grid {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	cursor: none;
 }
 
 .grid .row {
@@ -20,4 +20,14 @@
 .grid .row .cell:hover {
 	transform: scale(1.1);
 	transition: 0.2s;
+}
+
+.grid .cursor {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: black;
+	border: 2px solid #eeeeee;
+	position: absolute;
+	z-index: 1;
 }

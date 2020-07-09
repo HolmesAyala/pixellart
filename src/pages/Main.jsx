@@ -1,6 +1,8 @@
 import React from "react"
 
 import Grid from "../components/grid/Grid"
+import ColorList from "../components/color/ColorList"
+import ColorPickerButton from "../components/color/ColorPickerButton"
 
 class Main extends React.Component {
 
@@ -8,7 +10,9 @@ class Main extends React.Component {
 		super(props)
 
 		this.state = {
-			grid: this.getDefaultGrid()
+			grid: this.getDefaultGrid(),
+			colorsSelected: ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#eeeeee"],
+			currentColor: "#ff0000"
 		}
 
 		this.onClick_cell = this.onClick_cell.bind(this)
@@ -30,7 +34,8 @@ class Main extends React.Component {
 			grid[0].cells[0].color = "#ff0000"
 
 			this.setState({
-				grid: grid
+				grid: grid,
+				currentColor: "#ff0000"
 			})
 		} catch (error) {
 			console.log(error);
@@ -39,7 +44,7 @@ class Main extends React.Component {
 
 	getDefaultGrid() {
 		let grid = []
-		let rows = 50
+		let rows = 20
 		let columns = rows
 
 		for(let r = 0; r < rows; r++) {
@@ -62,12 +67,12 @@ class Main extends React.Component {
 	}
 
 	onClick_cell(data) {
-		this.applyColorToCell(data, "#ff0000")
+		this.applyColorToCell(data, this.state.currentColor)
 	}
 
 	onApplyColorToCell(data) {
 		// console.log("Apply color: ", data);
-		this.applyColorToCell(data, "#ff0000")
+		this.applyColorToCell(data, this.state.currentColor)
 	}
 
 	applyColorToCell(data, color = "#ffffff") {
@@ -88,10 +93,49 @@ class Main extends React.Component {
 		})
 	}
 
-	render() {
-		let { grid } = this.state
+	onClickColor_colorList = (color) => {
+		this.setState({
+			currentColor: color
+		})
+	}
+
+	onClose_colorPicker = (color) => {
+		let { colorsSelected } = this.state
+
+		if (!colorsSelected.some(c => c === color))
+			colorsSelected.push(color)
 		
-		return <Grid grid={grid} clickCell={this.onClick_cell} applyColorToCell={this.onApplyColorToCell} />
+		this.setState({
+			colorsSelected,
+			currentColor: color
+		})
+	}
+
+	render() {
+		let { grid, colorsSelected } = this.state
+
+		let colorPickerComponent = (
+			<ColorPickerButton onClose={ this.onClose_colorPicker } />
+		)
+
+		let colorListComponent = (
+			<ColorList style={{ maxWidth: "150px" }} colors={ colorsSelected } clickColor={this.onClickColor_colorList} />
+		)
+
+		let gridComponent = <Grid grid={grid} clickCell={this.onClick_cell} applyColorToCell={this.onApplyColorToCell} />
+
+		return (
+			<React.Fragment>
+				<div >
+					{ colorListComponent }
+					{ colorPickerComponent }
+				</div>
+
+				<div style={{ display: "flex", justifyContent: "center" }}>
+					{ gridComponent }
+				</div>
+			</React.Fragment>
+		)
 	}
 }
 
